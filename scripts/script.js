@@ -32,7 +32,19 @@
 					var name = wrapContainedSubstring(restaurant.name, query);
 					var cuisine = wrapContainedSubstring(restaurant.cuisine, query);
 
+					var ratingImg, restaurantURL;
+					if (restaurant.yelpData) {
+						ratingImg = restaurant.yelpData.rating_img_url;
+						restaurantURL = restaurant.yelpData.url;
+					}
+
 					var $result = $("<div class='result'></div>").append(name + ", " + cuisine);
+					if (ratingImg) {
+						$result.append("<img class='rating' src='" + ratingImg + "'>");
+					}
+
+					$result.data("url", restaurantURL);
+
 					$resultsObject = $resultsObject.add($result);
 				});
 				return $resultsObject;
@@ -50,7 +62,16 @@
 			inputElement: $("input#query"),
 			resultsContainer: $("div#results"),
 			resultSelector: "div.result",
+			selectedClass: "selected",
 			keyupCallback: ajaxGetter.scheduleUpdate,
+			selectedCallback: function($selectedResult, sticky) {
+				$('div#rating').empty().append($selectedResult.children("img.rating").clone());
+				if (sticky) {
+					if ($selectedResult.data("url")) {
+						setTimeout(function() {window.location = $selectedResult.data("url");}, 1000);
+					}
+				}
+			},
 		});
 
 		// duplicate <input autofocus> for older browsers

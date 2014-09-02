@@ -32,7 +32,9 @@ function AutoComplete(options) {
 	var $inputElement     = options.inputElement,     //jQuery object (required)
 		$resultsContainer = options.resultsContainer, //jQuery object (required)
 		resultSelector    = options.resultSelector,   //string jQuery selector that describes what a result looks like. example: "div.result" (required)
-		keyupCallback     = options.keyupCallback,    //function that will be called on keyup, so long as we decide the keyup event wasn't just meant for us
+		keyupCallback     = options.keyupCallback,    //function that will be called on keyup, so long as we decide the keyup event wasn't just meant for us (optional)
+		selectedCallback  = options.selectedCallback, //function that will be called on selection (optional)
+		selectedClass     = options.selectedClass,    //class that will be applied to the selected result (required)
 
 		$selectedResult = $(),                        //jQuery object representing the currently selected result
 		isSticky = false,                             //boolean whether the user made a selection that should persist (via click, or arrow and enter).
@@ -52,17 +54,40 @@ function AutoComplete(options) {
 		//don't do anything if shift key is down; user might be trying to (for instance) shift+up arrow to select
 		if (e.shiftKey === false) {
 			if (e.which === 38) { //arrow up
-				changeSelectionUp();
+				if ($selectedResult.length) {
+					if ($selectedResult.prev().length){
+						$selectedResult = $selectedResult.prev();
+					}
+					else {
+						$selectedResult = $();
+					}
+				}
+				else {
+					$selectedResult = $resultsContainer.children().last();
+				}
+
+				makeSelection($selectedResult, false);
 				e.preventDefault();
 			}
 			else if (e.which === 40) { //arrow down
-				changeSelectionDown();
+				if ($selectedResult.length) {
+					if ($selectedResult.next().length){
+						$selectedResult = $selectedResult.next();
+					}
+					else {
+						$selectedResult = $();
+					}
+				}
+				else {
+					$selectedResult = $resultsContainer.children().first();
+				}
+
+				makeSelection($selectedResult, false);
 				e.preventDefault();
 			}
 			else if (e.which === 13) { //enter
-				makeSelection($(e.target).closest(resultSelector), true);
+				makeSelection($resultsContainer.children(resultSelector + "." + selectedClass), true);
 				$resultsContainer.hide();
-				doSelectAction();
 				e.preventDefault();
 			}
 		}
@@ -96,7 +121,6 @@ function AutoComplete(options) {
 
 		makeSelection($selectedResult, true);
 		$resultsContainer.hide();
-		doSelectAction(); //no-op for now until we have an action to do for selections
 	});
 
 	//when the input element loses focus, close the results
@@ -133,26 +157,20 @@ function AutoComplete(options) {
 
 	// cycle up through the results, selecting the previous result
 	function changeSelectionUp() {
-		if ($selectedResult.length) {
-			if ($selectedResult.prev().length){
-				$selectedResult = $selectedResult.prev();
-			}
-			else {
-				$selectedResult = $();
-			}
-		}
-		else {
-			$selectedResult = $resultsContainer.children().last();
-		}
-
 		displaySelection();
 	}
 
-	function makeSelection($targetResultDiv, sticky) {
+	function makeSelection($targetResult, sticky) {
 		//isSticky is whether the user made a selection that should persist (via click, or arrow and enter).
 		//compare to selection that occurs when the user arrows through the list
 		isSticky = sticky;
-		$selectedResult = $targetResultDiv;
+		if (isSticky) {
+			$resultsContainer.hide();
+		}
+
+		$selectedResult = $targetResult;
+
+		selectedCallback($selectedResult, isSticky);
 
 		displaySelection();
 	}
@@ -161,8 +179,8 @@ function AutoComplete(options) {
 		if (! isSticky) {
 			if ($selectedResult[0]) {
 				$inputElement.val($selectedResult[0].textContent); //textContent will break on IE8 and older. Do we care?
-				$resultsContainer.children().removeClass("selected");
-				$selectedResult.addClass("selected");
+				$resultsContainer.children().removeClass(selectedClass);
+				$selectedResult.addClass(selectedClass);
 			}
 			else {
 				//preserve cursor position in the case where the value didn't change
@@ -170,19 +188,15 @@ function AutoComplete(options) {
 					$inputElement.val(userEnteredValue);
 				}
 
-				$resultsContainer.children().removeClass("selected");
+				$resultsContainer.children().removeClass(selectedClass);
 			}
 		}
-	}
-
-	function doSelectAction() {
-		//here's where we do whatever action should happen when a user selects a restaurant
-		console.log("you selected " + $selectedResult[0].textContent);
 	}
 
 	function clearSelection() {
 		if (! isSticky) {
 			$selectedResult = $();
+			makeSelection($());
 			displaySelection();
 		}
 	}

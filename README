@@ -3,7 +3,7 @@ brett.schellenberg@gmail.com
 
 Welcome to Eat it!
 ==================
-This is a proof-of-concept project with some tongue-in-cheek styling, developed as a code sample for gofundme.com. It consists of a simple php json service and an HTML/javascript/jQuery front-end. As you type a query into the search box, it fetches results from the json service, and creates the autocompleter you can interact with.
+This is a proof-of-concept project with some tongue-in-cheek styling, developed as a code sample for gofundme.com. It consists of a simple php json service and an HTML/javascript/jQuery front-end. To get started, open up index.html and begin typing a query into the search box. As you type, it will fetch results from the json service, and create the autocompleter you can interact with. Use either the mouse or the arrow up/down and enter keys to choose a selection. (Nothing actually happens when you choose)
 
 
 Files
@@ -22,6 +22,12 @@ scripts/script.js
 
 cgi/q.php
 json service which responds to a query with a list of results
+
+cgi/yelp.php
+access to yelp API
+
+cgi/OAuth.php
+OAuth support, needed for yelp API
 
 db.csv
 csv file of restaurants, referenced by cgi/q.php
@@ -52,7 +58,11 @@ Using the information above code us a page that:
 
 Copyright
 =========
-Note that I do not hold any rights to any images used in this project. As a proof-of-concept, no copyright infringement is intended. All other files are subject to the MIT License:
+Note that I do not hold any rights to any images used in this project. As a proof-of-concept, no copyright infringement is intended.
+I also do not own cgi/yelp.php or cgi/OAuth.php. These were provided by the yelp API examples. Each of those files lists its source within.
+
+
+All other files are subject to the MIT License:
 
 Copyright (c) 2014 Brett Schellenberg <brett.schellenberg@gmail.com>
 

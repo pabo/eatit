@@ -58,8 +58,19 @@ div#search{
 
 input#query {
 	width: 100%;
-	font-size: x-large;
+	font-size: 1.5em; /* twice the div#rating top: */
 }
+
+div#inputContainer {
+	position: relative;
+}
+
+div#rating {
+	position: absolute;
+	top: .75em; /* half the input#query font-size: */
+	right: 0px;
+}
+
 
 div#results {
 	color: black;
@@ -76,8 +87,15 @@ span.highlight {
 }
 
 div.result {
+	position: relative;
 	padding-left: 5px;
 	cursor: default;
+}
+
+div.result img.rating {
+	position: absolute;
+	right: 0px;
+	top: .25em;
 }
 
 div.result.selected {
@@ -94,12 +112,16 @@ div#content, div#results, div#search {
 
 div.result {
 	font-size: 1em;
-	padding-top: 3px;
-	padding-bottom: 3px;
+	padding-top: .1em;
+	padding-bottom: .1em;
 }
 
 input#query {
 	font-size: 1em;
+}
+
+div#rating {
+	top: .5em;
 }
 
 div#lyrics a {
