@@ -2,7 +2,7 @@
 	<head>
 		<meta charset='utf-8'>
 		<script src='http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js'></script>
-		<script src='ajaxget.js'></script>
+		<script src='scripts/ajaxget.js'></script>
 		<style>
 			div.entry {
 				border: 1px solid black;
@@ -10,10 +10,12 @@
 		</style>
 	</head>
 	<body>
+		<div>
+			Test the ajaxget.js functionality by entering text into the field below.</br>
+			<input type="text">
+			<div id="entries"></div>
+		</div>
 
-		<div id='lyrics'><a href='blah'>starting value</a></div>
-		<input type=text>
-		<div id='entries'><a href='blah'>starting entry</a></div>
 		<script>
 		var ajaxGetter = new AjaxGet({
 			resultsContainer: $("div#entries"),
@@ -27,14 +29,13 @@
 				return $resultsObject;
 			},
 			requestURL: "/cgi/q.php",
-			requestData: function(query) {
-				return { query: query };
+			requestData: function(data) {
+				return { query: data };
 			},
 		});
 
-		$("input").change( function() {
-			console.log(this);
-			ajaxGetter.scheduleUpdate($(this).val());
+		$("input").keyup( function(e) {
+			ajaxGetter.scheduleUpdate(e);
 		});
 
 		</script>

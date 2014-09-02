@@ -25,8 +25,8 @@
 //     return $resultsObject;
 //   },
 //   requestURL: "/cgi/q.php",
-//   requestData: function(query) {
-//     return { query: query };
+//   requestData: function(data) {
+//     return { query: data };
 //   },
 // });
 
@@ -65,7 +65,7 @@ function AjaxGet(options) {
 			return;
 		}
 		else if (query === "") {
-			updateResults("");
+			updateResults(query, "");
 			return;
 		}
 
@@ -75,7 +75,7 @@ function AjaxGet(options) {
 		//if we already have a cached result, update it right away without regard to any rate limits
 		if (cachedResults.hasOwnProperty(query)) {
 			clearTimeout(setTimeoutHandle);
-			updateResults(cachedResults[query]);
+			updateResults(query, cachedResults[query]);
 		}
 		//if this query is an extension of a cached query that had 0 results, then it too will have 0 results
 		else if (Object.keys(cachedResults).some(function(element) {
@@ -89,7 +89,7 @@ function AjaxGet(options) {
 			//This would also be a good place to preprocess the result set based on cached results, so that the UI
 			//updates with new, correct (albeit incomplete) results before the ajax request completes.
 
-			updateResults("");
+			updateResults(query, "");
 		}
 		else {
 			//We didn't find anything useful in the cache, so we'll need a new ajax request. Do that now if rateLimit allows us to.
@@ -104,7 +104,7 @@ function AjaxGet(options) {
 					cachedResults[query] = $resultsObject;
 
 					if (now > lastUpdatedTime) {
-						updateResults($resultsObject);
+						updateResults(query, $resultsObject);
 						lastUpdatedTime = now;
 					}
 				});
@@ -124,7 +124,7 @@ function AjaxGet(options) {
 	this.scheduleUpdate = scheduleUpdate;
 
 	// update the UI with the $resultsObject. calling this with empty string has the effect of hiding the div
-	function updateResults($resultsObject) {
+	function updateResults(query, $resultsObject) {
 		lastQuery = query;
 		$resultsContainer.html("");
 

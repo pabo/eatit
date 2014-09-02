@@ -38,8 +38,8 @@
 				return $resultsObject;
 			},
 			requestURL: "/cgi/q.php",
-			requestData: function(query) {
-				return { query: query };
+			requestData: function(data) {
+				return { query: data };
 			},
 		});
 

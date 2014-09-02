@@ -32,6 +32,7 @@ function AutoComplete(options) {
 	var $inputElement     = options.inputElement,     //jQuery object (required)
 		$resultsContainer = options.resultsContainer, //jQuery object (required)
 		resultSelector    = options.resultSelector,   //string jQuery selector that describes what a result looks like. example: "div.result" (required)
+		keyupCallback     = options.keyupCallback,    //function that will be called on keyup, so long as we decide the keyup event wasn't just meant for us
 
 		$selectedResult = $(),                        //jQuery object representing the currently selected result
 		isSticky = false,                             //boolean whether the user made a selection that should persist (via click, or arrow and enter).
@@ -77,8 +78,7 @@ function AutoComplete(options) {
 			userEnteredValue = $inputElement.val();
 
 			clearSelection();
-			//options.keyupCallback($inputElement.val()); // keyupCallback is something like ajaxGetter.scheduleUpdate
-			options.keyupCallback(e); // keyupCallback is something like ajaxGetter.scheduleUpdate
+			keyupCallback(e); // keyupCallback is something like ajaxGetter.scheduleUpdate
 		}
 	});
 

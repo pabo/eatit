@@ -1,5 +1,46 @@
 brett.schellenberg@gmail.com
 
+
+Welcome to Eat it!
+==================
+This is a proof-of-concept project with some tongue-in-cheek styling, developed as a code sample for gofundme.com. It consists of a simple php json service and an HTML/javascript/jQuery front-end. As you type a query into the search box, it fetches results from the json service, and creates the autocompleter you can interact with.
+
+
+Files
+=====
+scripts/ajaxget.js
+fetch results and insert them into the HTML page, for simple display or to hook up an autocompleter to.
+
+scripts/autocomplete.js
+auto completer. user interacts with it with various key/mouse events.
+
+scripts/elementCycle.js
+just a little fun: I use it here to cycle through random appropriate lyrics from the Weird Al song "Eat it".
+
+scripts/script.js
+
+
+cgi/q.php
+json service which responds to a query with a list of results
+
+db.csv
+csv file of restaurants, referenced by cgi/q.php
+
+
+Notes
+=====
+Tested on
+	Mac OSX 10.9.4
+		Firefox 31.0
+		Safari 7.0.5
+		Chrome 37.0.2062.94
+
+	iOS 7
+		Safari
+
+
+Specification
+=============
 project guidelines: (from http://www.gofundme.com/code-sample)
 
 Using the information above code us a page that:
@@ -9,4 +50,18 @@ Using the information above code us a page that:
 -This needs to be coded in PHP and jQuery
 
 
+Copyright
+=========
+Note that I do not hold any rights to any images used in this project. As a proof-of-concept, no copyright infringement is intended. All other files are subject to the MIT License:
 
+Copyright (c) 2014 Brett Schellenberg <brett.schellenberg@gmail.com>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
