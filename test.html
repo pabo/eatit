@@ -1,0 +1,42 @@
+<html lang="en">
+	<head>
+		<meta charset='utf-8'>
+		<script src='http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js'></script>
+		<script src='ajaxget.js'></script>
+		<style>
+			div.entry {
+				border: 1px solid black;
+			}
+		</style>
+	</head>
+	<body>
+
+		<div id='lyrics'><a href='blah'>starting value</a></div>
+		<input type=text>
+		<div id='entries'><a href='blah'>starting entry</a></div>
+		<script>
+		var ajaxGetter = new AjaxGet({
+			resultsContainer: $("div#entries"),
+			rateLimit: 500,
+			resultsGenerator: function(query, json) {
+				var $resultsObject = $();
+				$.each( json, function( index, restaurant ) {
+					var $result = $("<div class='entry'></div>").append(restaurant.name + ", " + restaurant.cuisine);
+					$resultsObject = $resultsObject.add($result);
+				});
+				return $resultsObject;
+			},
+			requestURL: "/cgi/q.php",
+			requestData: function(query) {
+				return { query: query };
+			},
+		});
+
+		$("input").change( function() {
+			console.log(this);
+			ajaxGetter.scheduleUpdate($(this).val());
+		});
+
+		</script>
+	</body>
+</html>
