@@ -4,21 +4,32 @@ body {
 	background-size: 100%;
 }
 
-div#transparentBackground {
-	position: fixed;
-	top: 0;
-	left: 0;
-	bottom: 0;
-	right: 0;
-	background-color: #EFAAAA;
-	opacity: 0.8;
+div#container {
+	height: 100%;
+	width: 100%;
+	-webkit-transform-style: preserve-3d;
+	-moz-transform-style: preserve-3d;
+	transform-style: preserve-3d;
+
 }
 
-div#container {
+div#content {
 	position: relative;
+	top: 50%;
+	-webkit-transform: translateY(-50%);
+	-ms-transform: translateY(-50%);
+	transform: translateY(-50%);
+
+	height: 18em;
+
 	text-align: center;
 	margin: auto;
-	width: 75%;
+	width: 70%;
+	background: rgba(0, 0, 0, 0.80);
+	border: 2px solid #AAAAAA;
+	border-radius: 15px;
+	color: #FEF6B5;
+	padding: 10px;
 }
 
 div#logo {
@@ -32,9 +43,14 @@ div#lyrics {
 div#lyrics a {
 	font-size: small;
 	text-decoration: none;
+	color: #FF9E54;
 }
 
-div#searchContainer {
+div#lyrics a[href] {
+}
+
+
+div#search{
 	margin: auto;
 	margin-top: 30px;
 	width: 70%;
@@ -46,7 +62,8 @@ input#query {
 }
 
 div#results {
-	position: absolute;
+	color: black;
+	margin: auto;
 	width: 70%;
 	text-align: left;
 	background-color: #FFFFFF;
@@ -71,7 +88,7 @@ div.result.selected {
 /* small screens */
 @media all and (max-width: 568px) {
 
-div#container, div#results, div#searchContainer {
+div#content, div#results, div#search {
 	width: 90%;
 }
 

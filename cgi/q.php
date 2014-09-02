@@ -17,7 +17,7 @@
 
 #simulate some network traffic for testing
 #sleep a random amount of time between 0 and 2 second
-sleep(2* mt_rand(0, mt_getrandmax()) / mt_getrandmax());
+#sleep(2* mt_rand(0, mt_getrandmax()) / mt_getrandmax());
 
 $maxResults = 5;
 $csvFile = "../db.csv";

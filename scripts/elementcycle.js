@@ -44,8 +44,8 @@ var elementCycle = (function($) {
 		//default option values
 		options = $.extend({}, {
 			delay: 2500,
-			fadeOut: 1000,
-			fadeIn: 500,
+			fadeOut: 800,
+			fadeIn: 200,
 		}, options );
 
 		return setInterval(function() {animate(options)}, options.delay);
