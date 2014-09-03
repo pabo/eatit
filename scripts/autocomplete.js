@@ -1,10 +1,10 @@
 // brett.schellenberg@gmail.com
 //
 // DESCRIPTION
-// Given an HTML input element (or other element that can accept keypresses), and an HTML container of results,
+// Given an HTML input element (or other element that can accept keypresses), and an HTML container of options,
 // AutoComplete creates an auto-complete interface where a user can select an option with arrow keys or the mouse.
 //
-// intercepts keyup/keydown events on inputElement: some keys like arrow, enter are captured; everything else is passed through to the keyupCallback
+// intercepts keyup/keydown events on inputElement: some keys like arrows, enter are captured; everything else is passed through to the keyupCallback
 //
 // requires jquery
 // variables that start with $ are jquery collections
@@ -15,17 +15,17 @@
 // TYPICAL USAGE
 // var AutoCompleter = new AutoComplete({
 //   inputElement: $("input#query"),
-//   resultsContainer: $("div#results"),
-//   resultSelector: "div.result",
+//   optionsContainer: $("div#results"),
+//   optionSelector: "div.result",
 //   selectedClass: "selected",
 //   keyupCallback: function(query) {
 //     //what should happen on keyup, like updating the div#results div with new results
 //     //query argument is the normalized value of input#query
 //   },
-//   selectedCallback: function($selectedResult, sticky) {
+//   selectedCallback: function($selectedOption, isHard) {
 //     //what should happen on selection.
-//     //note that a sticky selection is a user clicking or otherwise selecting an item
-//     //while a nonsticky selection is just the UI "soft" selecting (like when arrowing through the list)
+//     //note that a hard selection is a user clicking or otherwise selecting an item
+//     //while a soft selection is just the UI selecting (like when arrowing through the list)
 // });
 
 function AutoComplete(options) {
@@ -34,19 +34,18 @@ function AutoComplete(options) {
 		return new AutoComplete(options);
 	}
 
-	var $inputElement     = options.inputElement,     //jQuery object (required)
-		$resultsContainer = options.resultsContainer, //jQuery object (required)
-		resultSelector    = options.resultSelector,   //string jQuery selector that describes what a result looks like. example: "div.result" (required)
-		selectedClass     = options.selectedClass,    //class that will be applied to the selected result (required)
-		keyupCallback     = options.keyupCallback,    //function that will be called on keyup, so long as we decide the keyup event wasn't just meant for us (optional)
-		selectedCallback  = options.selectedCallback, //function that will be called on selection (optional)
+	var $inputElement     = options.inputElement,                //jQuery object (required)
+		$optionsContainer = options.optionsContainer,            //jQuery object (required)
+		optionSelector    = options.optionSelector,              //string jQuery selector that describes what an option looks like. example: "div.result" (required)
+		selectedClass     = options.selectedClass || "selected", //class that will be applied to the selected option (optional)
+		keyupCallback     = options.keyupCallback,               //function that will be called on keyup, if we decide the keyup event wasn't meant for us (optional)
+		selectedCallback  = options.selectedCallback,            //function that will be called on selection (optional)
 
-		$selectedResult = $(),                        //jQuery object representing the currently selected result
-		isSticky = false,                             //boolean whether the user made a selection that should persist (via click, or arrow and enter).
-		userEnteredValue,                             //what the user actually typed in
-		captureKeyCodes = [                           //key codes that represent the user interacting with us, as opposed to entering text
+		$selectedOption = $(),      //jQuery object representing the currently selected option
+		isHard = false,             //boolean whether the user made a selection that should persist (via click, or arrow and enter).
+		userEnteredValue,           //what the user actually typed in
+		captureKeyCodes = [         //key codes that represent the user interacting with us, as opposed to entering text
 			13, //enter
-			16, //shift
 			37, //left arrow
 			38, //up arrow
 			39, //right arrow
@@ -55,115 +54,121 @@ function AutoComplete(options) {
 
 
 	// arrow up key, arrow down key, and enter key are the user trying to make a selection from our list.
+	// on arrow down, we soft-select either the first option, the next option, or no option depending on what was previously selected
+	// on arrow up follows similar logic.
+	// on enter key, we hard-select the currently soft-selected option.
 	$inputElement.keydown(function(e){
-		//don't do anything if shift key is down; user might be trying to (for instance) shift+up arrow to select
+		//don't respond to events where shift key is being held down; user might be trying to (for instance) shift+up arrow to select
 		if (e.shiftKey === false) {
 			if (e.which === 38) { //arrow up
-				if ($selectedResult.length) {
-					if ($selectedResult.prev(resultSelector).length){
-						$selectedResult = $selectedResult.prev(resultSelector);
-					}
-					else {
-						$selectedResult = $();
-					}
+				e.preventDefault();
+				if ($selectedOption.length) {
+					makeSelection($selectedOption.prev(optionSelector).length ? $selectedOption.prev(optionSelector) : $(), false);
 				}
 				else {
-					$selectedResult = $resultsContainer.children(resultSelector).last();
+					makeSelection($optionsContainer.children(optionSelector).last(), false);
 				}
-
-				makeSelection($selectedResult, false);
-				e.preventDefault();
 			}
 			else if (e.which === 40) { //arrow down
-				if ($selectedResult.length) {
-					if ($selectedResult.next(resultSelector).length){
-						$selectedResult = $selectedResult.next(resultSelector);
-					}
-					else {
-						$selectedResult = $();
-					}
+				e.preventDefault();
+				if ($selectedOption.length) {
+					makeSelection($selectedOption.next(optionSelector).length ? $selectedOption.next(optionSelector) : $(), false);
 				}
 				else {
-					$selectedResult = $resultsContainer.children(resultSelector).first();
+					makeSelection($optionsContainer.children(optionSelector).first(), false);
 				}
-
-				makeSelection($selectedResult, false);
-				e.preventDefault();
 			}
 			else if (e.which === 13) { //enter
-				makeSelection($resultsContainer.children(resultSelector + "." + selectedClass), true);
-				$resultsContainer.hide();
 				e.preventDefault();
+				makeSelection($optionsContainer.children(optionSelector + "." + selectedClass), true);
 			}
 		}
 	});
 
 	//pass almost all keyup events on through to the keyupCallback
 	$inputElement.keyup(function(e){
+		//HACK for browsers like safari that support bfcache
+		//we need this to be off as we interact with the autocompleter
+		//but we'll need it to be on if we come back to the page via the back button so we keep our form data
+		$inputElement.attr("autocomplete", "off");
+
 		if (captureKeyCodes.indexOf(e.which) !== -1) {
 			//these keyCodes are the user interacting with the autocompleter itself, so we don't call keyupCallback
 		}
 		else {
-			isSticky = false;
+			//these keyCodes are the user entering text (or at least they -could- be entering text) so we call keyupCallback
 			userEnteredValue = $inputElement.val();
 
+			// user possibly changed the value of inputElement. selection should be invalidated
 			clearSelection();
-			keyupCallback(e); // keyupCallback is something like ajaxGetter.scheduleUpdate
+
+			if (typeof keyupCallback === 'function') {
+				keyupCallback(e); // keyupCallback is something like ajaxGetter.scheduleUpdate
+			}
 		}
 	});
 
-	$resultsContainer.mouseover(function(e){
-		makeSelection($(e.target).closest(resultSelector), false);
+	//hovering over an option, make the soft-selection
+	$optionsContainer.mouseover(function(e){
+		makeSelection($(e.target).closest(optionSelector), false);
 	});
 
-	$resultsContainer.mouseout(function(e){
+	//hovering no more over an option. clear the soft-selection
+	$optionsContainer.mouseout(function(e){
 		clearSelection();
 	});
 
 	//mousedown instead of click so that this event fires before the blur event
-	$resultsContainer.on("mousedown touchend", function(e){
-		var $selectedResult = $(e.target).closest(resultSelector);
-
-		makeSelection($selectedResult, true);
-		$resultsContainer.hide();
+	//touchend for mobile devices
+	$optionsContainer.on("click touchend", function(e){
+		makeSelection($(e.target).closest(optionSelector), true);
 	});
 
-	//when the input element loses focus, close the results
+	// blur event needs to yield to other events like click, so delay it a tiny bit
+	//when the input element loses focus, clear the soft-selection and close the options
 	$inputElement.blur(function(e){
-		//if the user arrows to a selection, then clicks somewhere else on the page, should we keep the selection or not? For now, don't keep it.
-		clearSelection();
-
-		$resultsContainer.hide();
+		setTimeout(function() {
+			//if the user arrows to a selection, then clicks somewhere else on the page, should we keep the selection or not? For now, don't keep it.
+			clearSelection();
+			$optionsContainer.hide();
+		}, 10);
 	});
 
-	//when the input element re-gains focus, show the results again, unless the user already selected one manually
+	//when the input element re-gains focus, show the options again, unless the user already selected one manually
 	$inputElement.focus(function(e){
-		if (! isSticky) {
-			$resultsContainer.show();
+		if (! isHard) {
+			$optionsContainer.show();
 		}
 	});
 
-	function makeSelection($targetResult, sticky) {
-		//isSticky is whether the user made a selection that should persist (via click, or arrow and enter).
+	//this is what sets the $selectedOption
+	function makeSelection($target, hardness) {
+		//hardness is whether the user made a selection that should persist (via click, or arrow and enter).
 		//compare to selection that occurs when the user arrows through the list
-		isSticky = sticky;
-		if (isSticky) {
-			$resultsContainer.hide();
+		isHard = hardness;
+		if (isHard) {
+			$optionsContainer.hide();
+
+			//HACK for browsers like safari that support bfcache
+			//we need this to be on if we come back to the page via the back button so we keep our form data
+			//but we want it to be off as we interact with the autocompleter
+			$inputElement.attr("autocomplete", "on");
 		}
 
-		$selectedResult = $targetResult;
-		displaySelection();
-
-		selectedCallback($selectedResult, isSticky);
-
+		$selectedOption = $target;
+		updateUI();
+		if (typeof selectedCallback === 'function') {
+			selectedCallback($selectedOption, isHard);
+		}
 	}
 
-	//display the proper highlighting and selection WITHOUT regard to isSticky
-	function displaySelection() {
-		if ($selectedResult[0]) {
-			$inputElement.val($selectedResult[0].textContent); //textContent will break on IE8 and older. Do we care?
-			$resultsContainer.children().removeClass(selectedClass);
-			$selectedResult.addClass(selectedClass);
+	//updates the UI according to the current state of this object: either we have a selection (hard- or soft-) and so
+	//we can display that, or we have no selection and we should display whatever the user actually entered
+	function updateUI() {
+		if ($selectedOption[0]) {
+			$inputElement.val($selectedOption[0].textContent); //textContent will break on IE8 and older. Do we care?
+			$optionsContainer.children(optionSelector).removeClass(selectedClass);
+			$selectedOption.addClass(selectedClass);
 		}
 		else {
 			//preserve cursor position in the case where the value didn't change
@@ -171,15 +176,15 @@ function AutoComplete(options) {
 				$inputElement.val(userEnteredValue);
 			}
 
-			$resultsContainer.children().removeClass(selectedClass);
+			$optionsContainer.children(optionSelector).removeClass(selectedClass);
 		}
 	}
 
+	//only clears soft-selections, not hard-selections
 	function clearSelection() {
-		if (! isSticky) {
-			$selectedResult = $();
+		if (! isHard) {
 			makeSelection($(), false);
-			displaySelection();
+			$optionsContainer.show();
 		}
 	}
 }

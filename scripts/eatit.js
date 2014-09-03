@@ -28,35 +28,44 @@
 			rateLimit: 300,
 			requestURL: "/cgi/q.php",
 			requestData: function(data) { return {query: data}; },
-			resultsGenerator: function(query, json) {
+			uniqueRequestKeyGenerator: function(e) {
+				//strip everything except letters, numbers, and spaces
+				return e.target.value.toLowerCase().replace(/[^a-z0-9 ]/i, "");
+			},
+			resultsGenerator: function(requestKey, json) {
 				var $resultsObject = $();
 				var atLeastOneYelp = false;
 
-				//for each restaurant, generate the visual elements
+				//for each restaurant, generate the html result
 				$.each(json, function(index, restaurant) {
-					var name = wrapContainedSubstring(restaurant.name, query);
-					var cuisine = wrapContainedSubstring(restaurant.cuisine, query);
-
+					//since the requestKey also happens to be the normalized string we're searching for (we did
+					//that when we set it in uniqueRequestGenerator above), we can use it to highlight the
+					//matching portion of the result
+					var name = wrapContainedSubstring(restaurant.name, requestKey);
+					var cuisine = wrapContainedSubstring(restaurant.cuisine, requestKey);
+					var url = "http://www.yelp.com/search?find_loc=92111&find_desc=" + restaurant.name + "+" + restaurant.cuisine;
 					var $result = $("<div class='result'></div>").append(name + ", " + cuisine);
 
 					if (restaurant.yelpData) {
 						atLeastOneYelp = true;
-						$result.data("url", restaurant.yelpData.url); //store the url so that the autoCompleter can use it
-
+						url = restaurant.yelpData.url;
 						if (restaurant.yelpData.rating_img_url) {
 							$result.append("<img class='rating' src='" + restaurant.yelpData.rating_img_url + "'>");
 						}
 					}
 
+					$result.data("url", url); //store the url so that the autoCompleter can use it
 					$resultsObject = $resultsObject.add($result);
 				});
 
-				//if at least one result contained yelp data, add the yelpLogo
+				//if at least one result contained yelp data, add the yelpLogo, per their API requirements
 				if (atLeastOneYelp) {
 					$resultsObject = $resultsObject.add(
-						$("<div class='yelpFooter'></div>")
-						.append("<a href='http://www.yelp.com/'></a>")
-						.append("<img class='yelpLogo' src='images/Powered_By_Yelp_Red.png'>")
+						$("<div class='yelpFooter'></div>").append(
+							$("<a href='http://www.yelp.com/'></a>").append(
+								"<img class='yelpLogo' src='images/Powered_By_Yelp_Red.png'>"
+							)
+						)
 					);
 				}
 
@@ -69,19 +78,18 @@
 		// registers mouseover/mouseout/click listeners on resultsContainer to select a child of it and populate inputElement
 		var AutoCompleter = new AutoComplete({
 			inputElement: $("input#query"),
-			resultsContainer: $("div#results"),
-			resultSelector: "div.result",
+			optionsContainer: $("div#results"),
+			optionSelector: "div.result",
 			selectedClass: "selected",
 			keyupCallback: ajaxGetter.scheduleUpdate,
-			selectedCallback: function($selectedResult, sticky) {
-				$('div#rating').empty().append($selectedResult.children("img.rating").clone());
-				if (sticky) {
+			selectedCallback: function($selectedOption, isHard) {
+				//update the rating based on the currently selected option
+				$('div#rating').empty().append($selectedOption.children("img.rating").clone());
+
+				if (isHard) {
 					//go to the url we stored in the ajaxGetter
-					if ($selectedResult.data("url")) {
-						//FIXME state persist on mobile safari et al
-						//$('div#rating').empty(); //TODO need this?
-						window.location = $selectedResult.data("url");
-						console.log("going");
+					if ($selectedOption.data("url")) {
+						window.location = $selectedOption.data("url");
 					}
 				}
 			},
