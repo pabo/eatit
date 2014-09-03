@@ -104,10 +104,12 @@ function get_business($business_id) {
  */
 function getInfoForTopResult($term, $location) {
     $response = json_decode(search($term, $location));
-    $business_id = $response->businesses[0]->id;
-    if ($business_id) {
-        $response = json_decode(get_business($business_id));
-        return $response;
+    if ($response && $response->businesses) {
+        $business_id = $response->businesses[0]->id;
+        if ($business_id) {
+            $response = json_decode(get_business($business_id));
+            return $response;
+        }
     }
 }
 

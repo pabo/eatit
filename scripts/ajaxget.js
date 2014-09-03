@@ -16,17 +16,10 @@
 // var ajaxGetter = new AjaxGet({
 //   resultsContainer: $("div#results"),
 //   rateLimit: 300,
-//   resultsGenerator: function(query, json) {
-//     var $resultsObject = $();
-//     $.each(json, function(index, restaurant) {
-//       var $result = $("<div class='result'></div>").append(restaurant.name + ", " + restaurant.cuisine);
-//       $resultsObject = $resultsObject.add($result);
-//     });
-//     return $resultsObject;
-//   },
 //   requestURL: "/cgi/q.php",
-//   requestData: function(data) {
-//     return { query: data };
+//   requestData: function(data) { return { query: data }; },
+//   resultsGenerator: function(query, json) {
+//     //how to generate results from the given query and json object
 //   },
 // });
 
@@ -39,9 +32,9 @@ function AjaxGet(options) {
 
 	var $resultsContainer = options.resultsContainer, //jQuery object specifying where to put the results (required)
 		rateLimit         = options.rateLimit,        //don't do ajax calls more often than this many milliseconds (required)
-		resultsGenerator  = options.resultsGenerator, //function which takes (query, jsonResult) and returns a jQuery object containing the results (required)
 		requestURL        = options.requestURL,       //URL of ajax json service (required)
 		requestData       = options.requestData,      //function which takes (query) and returns the json ajax request data object (required)
+		resultsGenerator  = options.resultsGenerator, //function which takes (query, jsonResult) and returns a jQuery object containing the results (required)
 
 		lastAjaxRequestTime = Date.now(),             //the last time we made an ajax call
 		lastQuery = "",                               //the last value we used in the ajax call

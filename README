@@ -3,7 +3,11 @@ brett.schellenberg@gmail.com
 
 Welcome to Eat it!
 ==================
-This is a proof-of-concept project with some tongue-in-cheek styling, developed as a code sample for gofundme.com. It consists of a simple php json service and an HTML/javascript/jQuery front-end. To get started, open up index.html and begin typing a query into the search box. As you type, it will fetch results from the json service, and create the autocompleter you can interact with. Use either the mouse or the arrow up/down and enter keys to choose a selection. (Nothing actually happens when you choose)
+This is a proof-of-concept project with some tongue-in-cheek styling (Eat it, Weird Al.), developed as a code sample for gofundme.com. It consists of a simple php json service and an HTML/javascript/jQuery front-end. To get started, open up index.html and begin typing a query into the search box. As you type, it will fetch results from the json service, and create the autocompleter you can interact with. Use either the mouse or the arrow up/down and enter keys to choose a selection.
+
+YELP! BIG CAVEAT!
+-----------------
+For now, we do a hacky thing: request more data from yelp. Ideally a real implementation would have a db.csv that already contains all the info we need. I just wanted a little more info to display in this project.  Since we are doing yelp API requests for every json request, our UI is not very responsive. I suggest you demo this project both WITH and WITHOUT yelp enabled. WITH to see what it could look like if we had access to more data on the backend, and WITHOUT to see how responsive our interface actually is. This setting can be controlled in cgi/q.php.
 
 
 Files

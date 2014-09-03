@@ -17,10 +17,15 @@
 //   inputElement: $("input#query"),
 //   resultsContainer: $("div#results"),
 //   resultSelector: "div.result",
+//   selectedClass: "selected",
 //   keyupCallback: function(query) {
 //     //what should happen on keyup, like updating the div#results div with new results
 //     //query argument is the normalized value of input#query
 //   },
+//   selectedCallback: function($selectedResult, sticky) {
+//     //what should happen on selection.
+//     //note that a sticky selection is a user clicking or otherwise selecting an item
+//     //while a nonsticky selection is just the UI "soft" selecting (like when arrowing through the list)
 // });
 
 function AutoComplete(options) {
@@ -32,9 +37,9 @@ function AutoComplete(options) {
 	var $inputElement     = options.inputElement,     //jQuery object (required)
 		$resultsContainer = options.resultsContainer, //jQuery object (required)
 		resultSelector    = options.resultSelector,   //string jQuery selector that describes what a result looks like. example: "div.result" (required)
+		selectedClass     = options.selectedClass,    //class that will be applied to the selected result (required)
 		keyupCallback     = options.keyupCallback,    //function that will be called on keyup, so long as we decide the keyup event wasn't just meant for us (optional)
 		selectedCallback  = options.selectedCallback, //function that will be called on selection (optional)
-		selectedClass     = options.selectedClass,    //class that will be applied to the selected result (required)
 
 		$selectedResult = $(),                        //jQuery object representing the currently selected result
 		isSticky = false,                             //boolean whether the user made a selection that should persist (via click, or arrow and enter).
@@ -55,15 +60,15 @@ function AutoComplete(options) {
 		if (e.shiftKey === false) {
 			if (e.which === 38) { //arrow up
 				if ($selectedResult.length) {
-					if ($selectedResult.prev().length){
-						$selectedResult = $selectedResult.prev();
+					if ($selectedResult.prev(resultSelector).length){
+						$selectedResult = $selectedResult.prev(resultSelector);
 					}
 					else {
 						$selectedResult = $();
 					}
 				}
 				else {
-					$selectedResult = $resultsContainer.children().last();
+					$selectedResult = $resultsContainer.children(resultSelector).last();
 				}
 
 				makeSelection($selectedResult, false);
@@ -71,15 +76,15 @@ function AutoComplete(options) {
 			}
 			else if (e.which === 40) { //arrow down
 				if ($selectedResult.length) {
-					if ($selectedResult.next().length){
-						$selectedResult = $selectedResult.next();
+					if ($selectedResult.next(resultSelector).length){
+						$selectedResult = $selectedResult.next(resultSelector);
 					}
 					else {
 						$selectedResult = $();
 					}
 				}
 				else {
-					$selectedResult = $resultsContainer.children().first();
+					$selectedResult = $resultsContainer.children(resultSelector).first();
 				}
 
 				makeSelection($selectedResult, false);

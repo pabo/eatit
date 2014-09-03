@@ -70,7 +70,7 @@ if (($handle = fopen($csvFile, "r")) !== FALSE) {
 		if (preg_match("/^$query/i", $normalizedName) || preg_match("/^$query/i", $normalizedCuisine)) {
 			if ($yelpEnabled) {
 				$yelpData = getInfoForTopResult($data[0], $yelpZip);
-				$relevantYelpData = (object)array("rating_img_url" => $yelpData->rating_img_url, "url" => $yelpData->url);
+				$relevantYelpData = $yelpData ? (object)array("rating_img_url" => $yelpData->rating_img_url, "url" => $yelpData->url) : "";
 			}
 
 			array_push($results, [ "name" => $data[0], "cuisine" => $data[1], "yelpData" => $relevantYelpData ]);

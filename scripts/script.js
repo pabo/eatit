@@ -26,33 +26,41 @@
 		var ajaxGetter = new AjaxGet({
 			resultsContainer: $("div#results"),
 			rateLimit: 300,
+			requestURL: "/cgi/q.php",
+			requestData: function(data) { return {query: data}; },
 			resultsGenerator: function(query, json) {
 				var $resultsObject = $();
+				var atLeastOneYelp = false;
+
+				//for each restaurant, generate the visual elements
 				$.each(json, function(index, restaurant) {
 					var name = wrapContainedSubstring(restaurant.name, query);
 					var cuisine = wrapContainedSubstring(restaurant.cuisine, query);
 
-					var ratingImg, restaurantURL;
-					if (restaurant.yelpData) {
-						ratingImg = restaurant.yelpData.rating_img_url;
-						restaurantURL = restaurant.yelpData.url;
-					}
-
 					var $result = $("<div class='result'></div>").append(name + ", " + cuisine);
-					if (ratingImg) {
-						$result.append("<img class='rating' src='" + ratingImg + "'>");
-					}
 
-					//store the url so that the autoCompleter can use it
-					$result.data("url", restaurantURL);
+					if (restaurant.yelpData) {
+						atLeastOneYelp = true;
+						$result.data("url", restaurant.yelpData.url); //store the url so that the autoCompleter can use it
+
+						if (restaurant.yelpData.rating_img_url) {
+							$result.append("<img class='rating' src='" + restaurant.yelpData.rating_img_url + "'>");
+						}
+					}
 
 					$resultsObject = $resultsObject.add($result);
 				});
+
+				//if at least one result contained yelp data, add the yelpLogo
+				if (atLeastOneYelp) {
+					$resultsObject = $resultsObject.add(
+						$("<div class='yelpFooter'></div>")
+						.append("<a href='http://www.yelp.com/'></a>")
+						.append("<img class='yelpLogo' src='images/Powered_By_Yelp_Red.png'>")
+					);
+				}
+
 				return $resultsObject;
-			},
-			requestURL: "/cgi/q.php",
-			requestData: function(data) {
-				return { query: data };
 			},
 		});
 
