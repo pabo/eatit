@@ -43,6 +43,7 @@
 						$result.append("<img class='rating' src='" + ratingImg + "'>");
 					}
 
+					//store the url so that the autoCompleter can use it
 					$result.data("url", restaurantURL);
 
 					$resultsObject = $resultsObject.add($result);
@@ -67,8 +68,12 @@
 			selectedCallback: function($selectedResult, sticky) {
 				$('div#rating').empty().append($selectedResult.children("img.rating").clone());
 				if (sticky) {
+					//go to the url we stored in the ajaxGetter
 					if ($selectedResult.data("url")) {
-						setTimeout(function() {window.location = $selectedResult.data("url");}, 1000);
+						//FIXME state persist on mobile safari et al
+						//$('div#rating').empty(); //TODO need this?
+						window.location = $selectedResult.data("url");
+						console.log("going");
 					}
 				}
 			},

@@ -68,7 +68,7 @@ div#inputContainer {
 div#rating {
 	position: absolute;
 	top: .75em; /* half the input#query font-size: */
-	right: 0px;
+	right: .75em;
 }
 
 
@@ -82,26 +82,25 @@ div#results {
 	-webkit-tap-highlight-color: rgba(0,0,0,0);
 }
 
-span.highlight {
-	color: #0088DD;
-}
-
 div.result {
 	position: relative;
 	padding-left: 5px;
 	cursor: default;
 }
 
-div.result img.rating {
-	position: absolute;
-	right: 0px;
-	top: .25em;
-}
-
 div.result.selected {
 	background-color: #8899FF;
 }
 
+div.result span.highlight {
+	color: #0088DD;
+}
+
+div.result img.rating {
+	position: absolute;
+	top: .25em;
+	right: .75em;
+}
 
 /* small screens */
 @media all and (max-width: 568px) {
@@ -122,6 +121,11 @@ input#query {
 
 div#rating {
 	top: .5em;
+	right: .25em;
+}
+
+div.result img.rating {
+	right: .25em;
 }
 
 div#lyrics a {

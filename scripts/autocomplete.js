@@ -116,7 +116,7 @@ function AutoComplete(options) {
 	});
 
 	//mousedown instead of click so that this event fires before the blur event
-	$resultsContainer.mousedown(function(e){
+	$resultsContainer.on("mousedown touchend", function(e){
 		var $selectedResult = $(e.target).closest(resultSelector);
 
 		makeSelection($selectedResult, true);
@@ -138,28 +138,6 @@ function AutoComplete(options) {
 		}
 	});
 
-	// cycle down through the results, selecting the next result
-	function changeSelectionDown() {
-		if ($selectedResult.length) {
-			if ($selectedResult.next().length){
-				$selectedResult = $selectedResult.next();
-			}
-			else {
-				$selectedResult = $();
-			}
-		}
-		else {
-			$selectedResult = $resultsContainer.children().first();
-		}
-
-		displaySelection();
-	}
-
-	// cycle up through the results, selecting the previous result
-	function changeSelectionUp() {
-		displaySelection();
-	}
-
 	function makeSelection($targetResult, sticky) {
 		//isSticky is whether the user made a selection that should persist (via click, or arrow and enter).
 		//compare to selection that occurs when the user arrows through the list
@@ -169,34 +147,33 @@ function AutoComplete(options) {
 		}
 
 		$selectedResult = $targetResult;
+		displaySelection();
 
 		selectedCallback($selectedResult, isSticky);
 
-		displaySelection();
 	}
 
+	//display the proper highlighting and selection WITHOUT regard to isSticky
 	function displaySelection() {
-		if (! isSticky) {
-			if ($selectedResult[0]) {
-				$inputElement.val($selectedResult[0].textContent); //textContent will break on IE8 and older. Do we care?
-				$resultsContainer.children().removeClass(selectedClass);
-				$selectedResult.addClass(selectedClass);
+		if ($selectedResult[0]) {
+			$inputElement.val($selectedResult[0].textContent); //textContent will break on IE8 and older. Do we care?
+			$resultsContainer.children().removeClass(selectedClass);
+			$selectedResult.addClass(selectedClass);
+		}
+		else {
+			//preserve cursor position in the case where the value didn't change
+			if ($inputElement.val() !== userEnteredValue) {
+				$inputElement.val(userEnteredValue);
 			}
-			else {
-				//preserve cursor position in the case where the value didn't change
-				if ($inputElement.val() !== userEnteredValue) {
-					$inputElement.val(userEnteredValue);
-				}
 
-				$resultsContainer.children().removeClass(selectedClass);
-			}
+			$resultsContainer.children().removeClass(selectedClass);
 		}
 	}
 
 	function clearSelection() {
 		if (! isSticky) {
 			$selectedResult = $();
-			makeSelection($());
+			makeSelection($(), false);
 			displaySelection();
 		}
 	}
