@@ -14,16 +14,13 @@ Files
 File                      | Description
 --------------------------|-------------------------|
 README                    | You're reading it now...
-
 index.html                | Eat it! homepage
 style.css                 | styles
 db.csv                    | csv file of restaurants, referenced by cgi/q.php
-
 scripts/eatit.js          | script for Eat it! project, which refers to these libraries:
 scripts/ajaxget.js        | fetch results and insert them into the HTML page, for simple display or to hook up an autocompleter to.
 scripts/autocomplete.js   | auto completer. user interacts with it with various key/mouse events. other events are passed through.
 scripts/elementCycle.js   | just a little fun: I use it here to cycle through random appropriate lyrics from the Weird Al song "Eat it".
-
 cgi/q.php                 | json service which responds to a query with a list of results
 cgi/yelp.php              | access to yelp API
 cgi/OAuth.php             | OAuth support, needed for yelp API
@@ -31,26 +28,24 @@ cgi/OAuth.php             | OAuth support, needed for yelp API
 
 Testing Notes
 =============
--Mac OSX 10.9.4
-    -Firefox 31.0
-    -Safari 7.0.5
-        -Safari supports bfcache so when we come back to the page after navigating away, state is maintained
-    -Chrome 37.0.2062.94
+- Mac OSX 10.9.4
+    - Firefox 31.0
+    - Safari 7.0.5
+        - Safari supports bfcache so when we come back to the page after navigating away, state is maintained
+    - Chrome 37.0.2062.94
 
--iPhone 4 / iOS 7
-    -Safari
-        -The input box is a little crowded with the name and cuisine and yelp ratings.
+- iPhone 4 / iOS 7
+    - Safari
+        - The input box is a little crowded with the name and cuisine and yelp ratings.
 
 
 Specification
 =============
-project guidelines: (from http://www.gofundme.com/code-sample)
-
-Using the information above code us a page that:
--Has a place for a user to type
--As the user is typing, a list of restaurant names should be shown to them. The results should include any restaurant whose name starts with the letters the user has typed so far AND any restaurant whose cuisine starts with the letters typed so far.
--This page needs to be fast, look good and function properly.
--This needs to be coded in PHP and jQuery
+- Given a .csv file of restaurant names and their cuisines
+- Has a place for a user to type
+- As the user is typing, a list of restaurant names should be shown to them. The results should include any restaurant whose name starts with the letters the user has typed so far AND any restaurant whose cuisine starts with the letters typed so far.
+- This page needs to be fast, look good and function properly.
+- This needs to be coded in PHP and jQuery
 
 
 Copyright
