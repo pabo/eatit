@@ -2,7 +2,7 @@ brett.schellenberg@gmail.com
 
 Welcome to Eat it!
 ==================
-This is a proof-of-concept project with some tongue-in-cheek styling (Eat it, Weird Al), developed as a code sample for gofundme.com. It consists of a simple php json service and an HTML/javascript/jQuery front-end. To get started, open up index.html and begin typing a query into the search box. As you type, it will fetch results from the json service, and create the autocompleter you can interact with. Use either the mouse or the arrow up/down and enter keys to choose a selection.
+This is a proof-of-concept project with some tongue-in-cheek styling (Eat it, Weird Al), developed as a code sample. It consists of a simple php json service and an HTML/javascript/jQuery front-end. To get started, open up index.html and begin typing a query into the search box. As you type, it will fetch results from the json service, and create the autocompleter you can interact with. Use either the mouse or the arrow up/down and enter keys to choose a selection.
 
 YELP! BIG CAVEAT!
 -----------------
@@ -11,34 +11,35 @@ For now, we do a hacky thing: request more data from yelp. Ideally a real implem
 
 Files
 =====
-README                    You're reading it now...
+File                      | Description
+--------------------------|-------------------------|
+README                    | You're reading it now...
 
-index.html                Eat it! homepage
-style.css                 styles
-db.csv                    csv file of restaurants, referenced by cgi/q.php
+index.html                | Eat it! homepage
+style.css                 | styles
+db.csv                    | csv file of restaurants, referenced by cgi/q.php
 
-scripts/eatit.js          script for Eat it! project, which refers to these libraries:
-scripts/ajaxget.js        fetch results and insert them into the HTML page, for simple display or to hook up an autocompleter to.
-scripts/autocomplete.js   auto completer. user interacts with it with various key/mouse events. other events are passed through.
-scripts/elementCycle.js   just a little fun: I use it here to cycle through random appropriate lyrics from the Weird Al song "Eat it".
+scripts/eatit.js          | script for Eat it! project, which refers to these libraries:
+scripts/ajaxget.js        | fetch results and insert them into the HTML page, for simple display or to hook up an autocompleter to.
+scripts/autocomplete.js   | auto completer. user interacts with it with various key/mouse events. other events are passed through.
+scripts/elementCycle.js   | just a little fun: I use it here to cycle through random appropriate lyrics from the Weird Al song "Eat it".
 
-cgi/q.php                 json service which responds to a query with a list of results
-cgi/yelp.php              access to yelp API
-cgi/OAuth.php             OAuth support, needed for yelp API
+cgi/q.php                 | json service which responds to a query with a list of results
+cgi/yelp.php              | access to yelp API
+cgi/OAuth.php             | OAuth support, needed for yelp API
 
 
 Testing Notes
 =============
-Tested on
-	Mac OSX 10.9.4
-		Firefox 31.0
-		Safari 7.0.5
-			Safari supports bfcache so when we come back to the page after navigating away, state is maintained
-		Chrome 37.0.2062.94
+-Mac OSX 10.9.4
+    -Firefox 31.0
+    -Safari 7.0.5
+        -Safari supports bfcache so when we come back to the page after navigating away, state is maintained
+    -Chrome 37.0.2062.94
 
-	iPhone 4 / iOS 7
-		Safari
-			The input box is a little crowded with the name and cuisine and yelp ratings.
+-iPhone 4 / iOS 7
+    -Safari
+        -The input box is a little crowded with the name and cuisine and yelp ratings.
 
 
 Specification
