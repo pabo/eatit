@@ -26,7 +26,7 @@
 		var ajaxGetter = new AjaxGet({
 			resultsContainer: $("div#results"),
 			rateLimit: 300,
-			requestURL: "/cgi/q.php",
+			requestURL: "cgi/q.php",
 			requestData: function(data) { return {query: data}; },
 			uniqueRequestKeyGenerator: function(e) {
 				//strip everything except letters, numbers, and spaces

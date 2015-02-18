@@ -2,7 +2,16 @@ brett.schellenberg@gmail.com
 
 Welcome to Eat it!
 ==================
+See the [live example](http://oneloveonebeach.com/eatit/).
+
 This is a proof-of-concept project with some tongue-in-cheek styling (Eat it, Weird Al), developed as a code sample. It consists of a simple php json service and an HTML/javascript/jQuery front-end. To get started, open up index.html and begin typing a query into the search box. As you type, it will fetch results from the json service, and create the autocompleter you can interact with. Use either the mouse or the arrow up/down and enter keys to choose a selection.
+
+How do I run this example?
+--------------------------
+You'll need a webserver with CGI support. Drop the three cgi files in your cgi-bin, change the paths as needed, and fire up index.html.
+
+Or just go to the [live example](http://oneloveonebeach.com/eatit/).
+
 
 YELP! BIG CAVEAT!
 -----------------
